@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LoRA 微调工作台</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="i18n.js"></script>
+  </head>
+  <body class="corpus-page">
+    <main class="corpus-shell">
+      <aside class="corpus-sidebar">
+        <div class="brand">
+          <div class="brand-mark">LR</div>
+          <div>
+            <h1>LoRA 微调工作台</h1>
+            <p>Qwen3 adapter status</p>
+          </div>
+        </div>
+        <a class="studio-entry" href="corpus.html">返回摘要证据平台</a>
+        <a class="studio-entry" href="index.html">返回设计 Copilot</a>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>模型设置</span>
+            <strong id="loraStage">加载中</strong>
+          </div>
+          <label>
+            <span>基座模型</span>
+            <input id="baseModel" type="text" value="Qwen/Qwen3-4B-Instruct-2507" />
+          </label>
+          <label>
+            <span>Embedding 模型</span>
+            <input id="embeddingModel" type="text" value="text-embedding-qwen3-embedding-0.6b" />
+          </label>
+          <label>
+            <span>输出目录</span>
+            <input id="outputDir" type="text" value="evidence/abstract-corpus/lora/output" />
+          </label>
+          <button id="saveConfigButton" class="wide-button" type="button">保存设置</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>训练数据</span>
+            <strong id="datasetState">未检测</strong>
+          </div>
+          <label>
+            <span>最大样本数</span>
+            <input id="maxExamples" type="number" min="300" max="20000" step="500" value="5000" />
+          </label>
+          <button id="datasetButton" class="wide-button primary" type="button">生成 LoRA 数据集</button>
+          <button id="figureButton" class="wide-button" type="button">生成 LoRA 图件</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>微调参数</span>
+          </div>
+          <div class="two-col">
+            <label>
+              <span>LoRA r</span>
+              <input id="loraR" type="number" min="4" max="128" step="4" value="16" />
+            </label>
+            <label>
+              <span>Alpha</span>
+              <input id="loraAlpha" type="number" min="4" max="256" step="4" value="32" />
+            </label>
+          </div>
+          <div class="two-col">
+            <label>
+              <span>Dropout</span>
+              <input id="loraDropout" type="number" min="0" max="0.5" step="0.01" value="0.05" />
+            </label>
+            <label>
+              <span>Epochs</span>
+              <input id="epochs" type="number" min="1" max="8" step="1" value="2" />
+            </label>
+          </div>
+          <label>
+            <span>Learning rate</span>
+            <input id="learningRate" type="text" value="0.00015" />
+          </label>
+          <label>
+            <span>Max seq length</span>
+            <input id="maxSeqLength" type="number" min="512" max="8192" step="512" value="2048" />
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <span>导出</span>
+          </div>
+          <div id="artifactLinks" class="button-grid"></div>
+        </section>
+      </aside>
+
+      <section class="corpus-main">
+        <header class="chat-header corpus-header">
+          <div>
+            <p>LoRA status is separate from Skill and RAG</p>
+            <h2>领域证据判别、机理抽取与智能体路由的 Qwen3 LoRA 微调</h2>
+          </div>
+          <div class="status-pill" id="pageStatus">加载中</div>
+        </header>
+
+        <section class="corpus-kpis" id="loraKpis"></section>
+
+        <section class="lora-command-panel corpus-card">
+          <div class="card-title">
+            <span>如何判断是否完成微调</span>
+            <strong id="completionBadge">未检测</strong>
+          </div>
+          <div id="completionDetails" class="lora-detail-grid"></div>
+        </section>
+
+        <section class="figure-panel">
+          <div class="card-title">
+            <span>LoRA 微调图件</span>
+            <strong id="figureCount">0</strong>
+          </div>
+          <div id="figureList" class="figure-list"></div>
+        </section>
+
+        <section class="corpus-card">
+          <div class="card-title">
+            <span>训练命令</span>
+            <strong>GPU 环境执行</strong>
+          </div>
+          <pre id="trainCommand" class="command-block"></pre>
+        </section>
+      </section>
+    </main>
+    <script src="lora.js"></script>
+  </body>
+</html>

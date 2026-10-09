@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>摘要证据增强平台</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="i18n.js"></script>
+  </head>
+  <body class="corpus-page">
+    <main class="corpus-shell">
+      <aside class="corpus-sidebar">
+        <div class="brand">
+          <div class="brand-mark">KG</div>
+          <div>
+            <h1>摘要证据增强平台</h1>
+            <p>Gold KG + Evidence Corpus</p>
+          </div>
+        </div>
+        <a class="studio-entry" href="index.html">返回设计 Copilot</a>
+        <a class="studio-entry" href="skills.html">多智能体 Skill 设置</a>
+        <a class="studio-entry" href="testml.html">机器学习平台</a>
+        <a class="studio-entry" href="lora.html">LoRA 微调工作台</a>
+
+        <section class="panel">
+          <div class="panel-head">
+            <span>语料上传</span>
+            <strong id="uploadState">待上传</strong>
+          </div>
+          <label class="file-drop">
+            <input id="corpusFile" type="file" accept=".txt,.tsv,.csv" />
+            <span>上传 40000 篇 WOS 摘要</span>
+            <small>支持 WOS plain text、TSV、CSV</small>
+          </label>
+          <button id="uploadCorpusButton" class="wide-button" type="button">解析并建立语料</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>运行设置</span>
+          </div>
+          <label>
+            <span>每条 KG 保留证据数</span>
+            <input id="topKInput" type="number" min="3" max="24" step="1" value="8" />
+          </label>
+          <label>
+            <span>调试文献上限</span>
+            <input id="maxDocsInput" type="number" min="0" step="100" value="0" />
+          </label>
+          <button id="runAllButton" class="wide-button primary" type="button">运行证据校准</button>
+          <button id="landscapeButton" class="wide-button" type="button">计算智能体证据先验</button>
+          <button id="figureButton" class="wide-button" type="button">生成 NC 级别图件</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>规范约束库</span>
+            <strong id="standardState">未加载</strong>
+          </div>
+          <label>
+            <span>规范 PDF 文件夹</span>
+            <input id="standardSourceDir" type="text" value="data/standards" />
+          </label>
+          <label>
+            <span>抽取模式</span>
+            <select id="standardMode">
+              <option value="precision">高精度</option>
+              <option value="recall">扩展召回</option>
+            </select>
+          </label>
+          <label class="inline-check">
+            <input id="standardAllPdfs" type="checkbox" />
+            <span>扫描全部 PDF（2277 个，较慢）</span>
+          </label>
+          <button id="extractStandardsButton" class="wide-button" type="button">抽取规范约束</button>
+          <div class="button-grid">
+            <a href="/api/standards/export/csv">CSV</a>
+            <a href="/api/standards/export/jsonl">JSONL</a>
+            <a href="/api/standards/export/summary">Summary</a>
+          </div>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>Embedding 设置</span>
+            <strong id="embeddingState">未测试</strong>
+          </div>
+          <label>
+            <span>API URL</span>
+            <input id="embeddingApiUrl" type="text" value="http://localhost:1234/v1/embeddings" />
+          </label>
+          <label>
+            <span>模型</span>
+            <input id="embeddingModel" type="text" value="text-embedding-qwen3-embedding-0.6b" />
+          </label>
+          <div class="two-col">
+            <label>
+              <span>Batch</span>
+              <input id="embeddingBatchSize" type="number" min="1" max="512" step="1" value="32" />
+            </label>
+            <label>
+              <span>Timeout</span>
+              <input id="embeddingTimeout" type="number" min="10" max="900" step="10" value="120" />
+            </label>
+          </div>
+          <button id="saveEmbeddingButton" class="wide-button" type="button">保存 Embedding 设置</button>
+          <button id="testEmbeddingButton" class="wide-button" type="button">测试 Embedding 连接</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>LoRA 微调</span>
+            <strong id="loraState">未生成</strong>
+          </div>
+          <label>
+            <span>基座模型</span>
+            <input id="loraBaseModel" type="text" value="Qwen/Qwen3-4B-Instruct-2507" />
+          </label>
+          <label>
+            <span>Embedding 模型</span>
+            <input id="loraEmbeddingModel" type="text" value="text-embedding-qwen3-embedding-0.6b" />
+          </label>
+          <label>
+            <span>最大样本数</span>
+            <input id="loraMaxExamples" type="number" min="300" max="20000" step="500" value="5000" />
+          </label>
+          <button id="loraButton" class="wide-button" type="button">生成 LoRA 数据与脚本</button>
+          <div id="loraLinks" class="lora-links"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <span>导出</span>
+          </div>
+          <div class="button-grid">
+            <a href="/api/abstract-corpus/export/meta">Meta</a>
+            <a href="/api/abstract-corpus/export/calibration">校准 JSON</a>
+            <a href="/api/abstract-corpus/export/landscape">Landscape</a>
+            <a href="/api/abstract-corpus/export/pairs">证据表 CSV</a>
+            <a href="/api/abstract-corpus/export/agent_priors">Agent Priors</a>
+            <a href="/api/abstract-corpus/export/docs">Docs JSONL</a>
+          </div>
+        </section>
+      </aside>
+
+      <section class="corpus-main">
+        <header class="chat-header corpus-header">
+          <div>
+            <p>Evidence-calibrated KG</p>
+            <h2>大规模摘要语料驱动的精选知识图谱证据校准与缺口识别</h2>
+          </div>
+          <div class="status-pill" id="corpusStatus">加载中</div>
+        </header>
+
+        <section class="corpus-kpis" id="corpusKpis"></section>
+
+        <section class="figure-panel" id="figurePanel">
+          <div class="card-title">
+            <span>NC 级别证据图件</span>
+            <strong id="figureCount">0</strong>
+          </div>
+          <div id="figureList" class="figure-list"></div>
+        </section>
+
+        <section class="corpus-card standard-panel">
+          <div class="card-title">
+            <span>规范约束库</span>
+            <strong id="standardCount">0</strong>
+          </div>
+          <div class="standard-filters">
+            <select id="standardDomainFilter">
+              <option value="">全部混凝土类型</option>
+              <option value="general_concrete">普通混凝土</option>
+              <option value="mix_design_concrete">配合比设计</option>
+              <option value="pumped_concrete">泵送混凝土</option>
+              <option value="self_compacting_concrete">自密实混凝土</option>
+              <option value="high_strength_concrete">高强混凝土</option>
+              <option value="high_performance_concrete">高性能混凝土</option>
+              <option value="reactive_powder_concrete">活性粉末/UHPC</option>
+              <option value="marine_concrete">水运/海工混凝土</option>
+              <option value="durability_concrete">耐久性混凝土</option>
+            </select>
+            <select id="standardCompileFilter">
+              <option value="">全部用途</option>
+              <option value="optimizable">可进入优化器</option>
+              <option value="reference_only">仅作规范依据</option>
+            </select>
+          </div>
+          <div id="standardSummary" class="standard-summary"></div>
+          <div id="standardList" class="candidate-list"></div>
+        </section>
+
+        <section class="corpus-actions">
+          <button id="calibrateButton" type="button">运行 KG 证据校准</button>
+          <button id="landscapeTopButton" type="button">计算 Evidence Landscape</button>
+          <button id="figureTopButton" type="button">生成图件</button>
+          <select id="calibrationSort">
+            <option value="confidence">按置信度</option>
+            <option value="low_evidence">按证据缺口</option>
+            <option value="recent">按近年证据</option>
+          </select>
+        </section>
+
+        <section class="corpus-grid">
+          <article class="corpus-card">
+            <div class="card-title">
+              <span>KG 证据校准</span>
+              <strong id="calibrationCount">0</strong>
+            </div>
+            <div id="calibrationList" class="calibration-list"></div>
+          </article>
+
+          <article class="corpus-card">
+            <div class="card-title">
+              <span>证据缺口与使用建议</span>
+              <strong id="gapCount">0</strong>
+            </div>
+            <div id="gapList" class="candidate-list"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="corpus.js"></script>
+  </body>
+</html>

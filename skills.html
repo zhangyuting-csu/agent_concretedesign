@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>多智能体 Skill 设置</title>
+    <link rel="stylesheet" href="style.css?v=skill-eval-v3" />
+    <script defer src="i18n.js"></script>
+  </head>
+  <body class="skills-page">
+    <main class="skills-shell">
+      <header class="studio-header studio-page-header">
+        <div>
+          <p>Concrete Design Copilot</p>
+          <h1>多智能体 Skill 设置</h1>
+          <span>管理协议驱动 Skill、知识资产、证据路由与验证闭环。</span>
+        </div>
+        <div class="studio-header-actions">
+          <a href="testml.html">机器学习平台</a>
+          <a href="index.html">返回主界面</a>
+        </div>
+      </header>
+
+      <section class="skill-studio">
+        <div class="studio-layout studio-page-layout">
+          <aside id="skillNav" class="skill-nav"></aside>
+          <section class="skill-editor">
+            <div class="skill-meta-grid">
+              <label><span>名称</span><input id="skillName" /></label>
+              <label><span>版本</span><input id="skillVersion" /></label>
+            </div>
+            <label><span>说明</span><input id="skillDescription" /></label>
+            <section class="skill-v2-hero">
+              <div>
+                <span id="skillArchitectureVersion">v2</span>
+                <strong id="skillArchitectureTitle">协议驱动智能体</strong>
+                <p>任务契约、证据路由、工具链、校验器与反思闭环共同约束。</p>
+              </div>
+              <div id="skillArchitectureFlow" class="skill-architecture-flow"></div>
+            </section>
+            <section class="skill-v2-grid">
+              <article>
+                <header><strong>输入 / 输出契约</strong><span>Contract</span></header>
+                <div id="skillContractView" class="protocol-view"></div>
+                <textarea id="skillContract" rows="7"></textarea>
+              </article>
+              <article>
+                <header><strong>证据路由策略</strong><span>Retrieval</span></header>
+                <div id="skillRetrievalView" class="protocol-view"></div>
+                <textarea id="skillRetrieval" rows="7"></textarea>
+              </article>
+              <article>
+                <header><strong>工具链</strong><span>Toolchain</span></header>
+                <div id="skillToolchainView" class="protocol-view"></div>
+                <textarea id="skillToolchain" rows="7"></textarea>
+              </article>
+              <article>
+                <header><strong>验证规则</strong><span>Validators</span></header>
+                <div id="skillValidatorsView" class="protocol-view"></div>
+                <textarea id="skillValidators" rows="7"></textarea>
+              </article>
+              <article>
+                <header><strong>反思闭环</strong><span>Reflection</span></header>
+                <div id="skillReflectionView" class="protocol-view"></div>
+                <textarea id="skillReflection" rows="7"></textarea>
+              </article>
+              <article>
+                <header><strong>评估基准集</strong><span>Benchmark</span></header>
+                <div id="skillBenchmarksView" class="protocol-view"></div>
+                <textarea id="skillBenchmarks" rows="7"></textarea>
+              </article>
+            </section>
+            <label class="prompt-editor"><span>Skill 提示词</span><textarea id="skillPrompt" rows="18"></textarea></label>
+            <div class="skill-actions">
+              <button id="saveSkillButton" type="button">保存 Skill</button>
+              <span id="skillSaveStatus"></span>
+            </div>
+          </section>
+          <aside class="skill-assets">
+            <div class="asset-head">
+              <h2>知识资产工作台</h2>
+              <span>共享给全部智能体</span>
+            </div>
+            <label class="file-drop">
+              <input id="skillAssetFile" type="file" accept=".txt,.pdf" />
+              <span>上传摘要语料 TXT 或规范 PDF</span>
+              <small>当前先归档到对应 Skill；后续可接入分块、索引与检索。</small>
+            </label>
+            <label class="file-drop folder-drop">
+              <input id="skillAssetFolder" type="file" accept=".pdf" webkitdirectory directory multiple />
+              <span>导入规范 PDF 文件夹</span>
+              <small>选择一个根目录，自动递归导入其中所有子文件夹内的 PDF。</small>
+            </label>
+            <div id="bulkUploadStatus" class="bulk-upload-status"></div>
+            <div class="asset-toolbar">
+              <button id="deleteAllAssetsButton" type="button">删除当前 Skill 全部资产</button>
+              <span>仅删除当前智能体资产，并同步移除对应证据索引与自动 KG 候选。</span>
+            </div>
+            <section class="rag-console">
+              <header><strong>RAG 操作流</strong><span id="ragFlowStatus">等待资产</span></header>
+              <div id="ragFlow" class="rag-flow"></div>
+            </section>
+            <section class="job-console">
+              <header><strong>后台文档处理</strong><span>OCR / 表格 / 索引</span></header>
+              <div id="documentJobs" class="document-jobs"></div>
+            </section>
+            <section class="skill-eval-console">
+              <header><strong>Skill v2 自动评估</strong><span id="skillEvalScore">-</span></header>
+              <div id="skillEvalPanel" class="skill-eval-panel"></div>
+            </section>
+            <section class="kg-audit-console">
+              <header><strong>自动知识图谱候选</strong><span id="kgAuditCount">-</span></header>
+              <div id="kgAuditPanel" class="kg-audit-panel"></div>
+            </section>
+            <div class="asset-workbench">
+              <div id="skillAssetList" class="skill-asset-list"></div>
+              <section id="assetPreview" class="asset-preview">
+                <p>选择一个资产查看提取文本、切块与索引过程。</p>
+              </section>
+            </div>
+            <section class="evidence-status">
+              <div>
+                <span>统一证据索引</span>
+                <strong id="evidenceTotal">-</strong>
+              </div>
+              <div id="evidenceCounts" class="evidence-counts"></div>
+              <button id="rebuildEvidenceButton" type="button">重建索引</button>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+    <script src="skills.js?v=skill-eval-v4"></script>
+  </body>
+</html>

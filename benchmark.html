@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>需求理解 Benchmark</title>
+    <link rel="stylesheet" href="style.css?v=benchmark-v1" />
+    <script defer src="i18n.js"></script>
+  </head>
+  <body class="benchmark-page">
+    <main class="benchmark-shell">
+      <aside class="benchmark-sidebar">
+        <div class="brand">
+          <div class="brand-mark">BM</div>
+          <div>
+            <h1>Demand Benchmark</h1>
+            <p>Natural language requirement set</p>
+            <p class="author-line">作者：张玉庭，CSU</p>
+          </div>
+        </div>
+        <a class="studio-entry" href="index.html">返回主界面</a>
+        <a class="studio-entry" href="skills.html">多智能体 Skill</a>
+        <a class="studio-entry" href="testml.html">机器学习平台</a>
+        <section class="panel benchmark-stats">
+          <span>样例总数</span>
+          <strong id="benchmarkTotal">-</strong>
+          <small>200 条程序化生成 + 53 条高难度人工样例，包含低碳低收缩专用样例</small>
+        </section>
+        <section class="panel">
+          <div class="panel-head"><span>类别筛选</span><button id="clearFilters" type="button">重置</button></div>
+          <div id="categoryFilters" class="benchmark-filter-list"></div>
+        </section>
+      </aside>
+      <section class="benchmark-main">
+        <header class="benchmark-hero">
+          <div>
+            <p>Requirement Understanding Benchmark</p>
+            <h1>混凝土设计自然语言需求测试集</h1>
+            <span>用于评估需求解析智能体对强度、龄期、材料策略、流动性、施工方式、耐久环境和复杂约束的理解能力。</span>
+          </div>
+          <div class="benchmark-actions">
+            <button id="copyVisible" type="button">复制当前结果</button>
+            <button id="downloadBenchmark" type="button">下载 JSON</button>
+          </div>
+        </header>
+        <section class="benchmark-toolbar">
+          <input id="benchmarkSearch" type="search" placeholder="搜索：80MPa、禁止硅灰、自密实、冻融、泵送、流动性..." />
+          <select id="difficultyFilter">
+            <option value="">全部难度</option>
+            <option value="standard">标准表达</option>
+            <option value="hard">高难度表达</option>
+          </select>
+        </section>
+        <section class="benchmark-runner">
+          <header>
+            <div>
+              <strong>批量运行与断点续跑</strong>
+              <span id="runnerStatus">等待开始。结果保存到本机 IndexedDB，刷新或断电后可继续；若后端服务重启，需要先在主界面重新上传模型包。</span>
+            </div>
+            <div class="runner-actions">
+              <button id="runVisibleCases" type="button">运行当前结果</button>
+              <button id="resumeCases" type="button">断点续跑</button>
+              <button id="runFailedCases" type="button">重跑失败</button>
+              <button id="pauseRunner" type="button">暂停</button>
+              <button id="downloadRunResults" type="button">下载完整报告包</button>
+              <button id="clearRunResults" type="button">清空运行记录</button>
+            </div>
+          </header>
+          <div class="runner-progress">
+            <i id="runnerProgressBar"></i>
+          </div>
+          <div id="runnerStats" class="runner-stats"></div>
+          <div id="runnerLog" class="runner-log"></div>
+        </section>
+        <section class="benchmark-analytics" id="benchmarkAnalytics"></section>
+        <section class="benchmark-summary-grid" id="benchmarkSummary"></section>
+        <section id="benchmarkList" class="benchmark-list"></section>
+      </section>
+    </main>
+    <script src="benchmark.js?v=benchmark-v2"></script>
+  </body>
+</html>

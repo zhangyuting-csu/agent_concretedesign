@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Concrete Design Copilot</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      window.MathJax = {
+        tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]], displayMath: [["\\[", "\\]"], ["$$", "$$"]] },
+        svg: { fontCache: "global" },
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <script defer src="i18n.js"></script>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">KG</div>
+          <div>
+            <h1>Concrete Design Copilot</h1>
+            <p>KG + LLM + MMO</p>
+            <p class="author-line">作者：张玉庭，CSU</p>
+          </div>
+        </div>
+
+        <section class="panel session-panel">
+          <div class="panel-head">
+            <span>会话</span>
+            <button id="newSessionButton" type="button">新建</button>
+          </div>
+          <div id="sessionList" class="session-list"></div>
+        </section>
+
+        <section class="panel">
+          <a class="studio-entry" href="skills.html">设置 / 多智能体 Skill</a>
+          <a class="studio-entry" href="testml.html">机器学习平台</a>
+          <a class="studio-entry" href="corpus.html">摘要证据增强平台</a>
+          <a class="studio-entry benchmark-entry" href="benchmark.html">需求理解 Benchmark</a>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <span>模型</span>
+            <strong id="coreStatus">检查中</strong>
+          </div>
+          <label class="file-drop">
+            <input id="modelFile" type="file" accept=".naturemlmodel,.naturemlopt,.pkl,.joblib" />
+            <span>上传 testML 导出的模型包</span>
+            <small id="modelStatus">尚未加载模型</small>
+          </label>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="panel-head">
+            <span>高级优化设置</span>
+          </div>
+          <details>
+            <summary>默认由用户指令解析，必要时手动覆盖</summary>
+            <label>
+              <span>算法</span>
+              <select id="algorithmSelect">
+                <option>NSGA-II</option>
+                <option>MOEA/D</option>
+                <option>MOPSO</option>
+                <option>Adaptive Weighted Sum</option>
+              </select>
+            </label>
+            <div class="two-col">
+              <label>
+                <span>种群</span>
+                <input id="popSize" type="number" min="24" max="240" step="8" value="72" />
+              </label>
+              <label>
+                <span>代数</span>
+                <input id="generations" type="number" min="8" max="120" step="4" value="36" />
+              </label>
+            </div>
+          </details>
+        </section>
+
+        <section class="panel">
+          <details>
+            <summary>变量边界 JSON</summary>
+            <textarea id="boundsJson" rows="9" placeholder='[{"name":"cement","lower":180,"upper":520}]'></textarea>
+          </details>
+        </section>
+
+        <section class="panel note-panel">
+          <p>Author: Yuting Zhang，CSU，Ph.D</p>
+        </section>
+      </aside>
+
+      <section class="chat-area">
+        <header class="chat-header">
+          <div>
+            <p>Concrete Design Copilot</p>
+            <h2>多智能体协作的混凝土智能设计</h2>
+          </div>
+          <div class="status-pill" id="lmStatus">LM Studio: localhost:1234</div>
+        </header>
+
+        <div id="chatLog" class="chat-log">
+          <article class="message assistant">
+            <div class="avatar">AI</div>
+            <div class="bubble">
+              <p>请上传模型包，然后直接输入需求。例如：</p>
+              <p class="example">设计一个 80 MPa、28 天龄期的低碳高流动性混凝土，尽量减少水泥用量，允许使用粉煤灰、矿渣和硅灰。</p>
+            </div>
+          </article>
+        </div>
+
+        <form id="chatForm" class="composer">
+          <textarea id="promptInput" rows="2" placeholder="例如：设计一个 80 MPa、28 天龄期的低碳高流动性混凝土，要求泵送施工，尽量少用水泥。"></textarea>
+          <button id="sendButton" type="submit">发送</button>
+        </form>
+      </section>
+
+      <aside class="runway">
+        <section class="agent-stage active" data-agent="requirement">
+          <div class="stage-orb"></div>
+          <div>
+            <strong>1. 需求解析智能体</strong>
+            <p id="stageRequirement">等待用户需求</p>
+          </div>
+        </section>
+        <section class="agent-stage" data-agent="optimizer">
+          <div class="stage-orb"></div>
+          <div>
+            <strong>2. 优化建模智能体</strong>
+            <p id="stageOptimizer">等待目标函数与约束设置</p>
+          </div>
+        </section>
+        <section class="agent-stage" data-agent="kg">
+          <div class="stage-orb"></div>
+          <div>
+            <strong>3. 机理检索智能体</strong>
+            <p id="stageKg">等待知识图谱检索</p>
+          </div>
+        </section>
+
+        <section class="result-panel">
+          <h3>快速指标</h3>
+          <div id="kpiGrid" class="kpi-grid"></div>
+        </section>
+
+        <section class="result-panel">
+          <h3>推荐配合比</h3>
+          <div id="solutionTable" class="solution-grid"></div>
+        </section>
+
+        <section class="result-panel">
+          <h3>机理建议</h3>
+          <div id="recommendations" class="recommendations"></div>
+        </section>
+      </aside>
+    </main>
+    <script src="app.js?v=english-live-kg-v10"></script>
+  </body>
+</html>
